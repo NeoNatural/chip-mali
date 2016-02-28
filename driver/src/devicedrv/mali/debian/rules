@@ -1,0 +1,57 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+name = chip-mali
+source_package  := $(name)-source
+source_target   := usr/src/modules/$(name)
+source_debdir   := debian/$(source_package)/$(source_target)/debian
+# Parse the package version from the changelog, "borrowed" from acpi_call
+version := $(shell dpkg-parsechangelog | grep '^Version:' | cut -d' ' -f2 |\
+ rev | cut -d- -f2- | rev | cut -d':' -f2)
+
+%:
+	dh $@ --with dkms
+
+build:
+
+override_dh_auto_clean:
+
+override_dh_auto_build:
+
+#override_dh_dkms:
+#	dh_dkms -p$(name)-dkms -V $(version)
+
+override_dh_auto_install:
+	# chip-mali-dkms
+	# dh_installdirs -p$(name)-dkms $(source_target)
+	# dh_install -p$(name)-dkms Makefile $(source_target)
+	# dh_install -p$(name)-dkms bbswitch.c $(source_target)
+
+	# chip-mali-source (for use with module-assistant)
+	dh_installdirs -p $(source_package) usr/src/modules/$(name)/debian
+
+	dh_installdirs -p $(source_package) $(source_target)/debian
+
+	dh_install -p $(source_package) common $(source_target)
+	dh_install -p $(source_package) Kconfig $(source_target)
+	dh_install -p $(source_package) include $(source_target)
+	dh_install -p $(source_package) linux $(source_target)
+	dh_install -p $(source_package) Makefile $(source_target)
+	dh_install -p $(source_package) Kbuild $(source_target)
+	dh_install -p $(source_package) Makefile $(source_target)
+	dh_install -p $(source_package) platform $(source_target)
+	dh_install -p $(source_package) regs $(source_target)
+	dh_install -p $(source_package) .version $(source_target)
+	dh_install -p $(source_package) timestamp-arm11-cc $(source_target)
+	dh_install -p $(source_package) timestamp-default $(source_target)
+
+	install -D -m 0755 debian/rules.modules $(source_debdir)/rules
+
+	# dh_install -p $(source_package) $(source_debdir)/rules
+	for file in changelog compat control control.modules.in; do \
+		install -m 644 debian/$$file $(source_debdir)/; \
+	done
+	cd debian/$(source_package)/usr/src && tar cfj $(name).tar.bz2 modules && rm -rf modules
+

@@ -1,0 +1,31 @@
+#!/usr/bin/make -f
+
+# module-assistant stuff
+PACKAGE = chip-mali-modules
+MA_DIR ?= /usr/share/modass
+-include $(MA_DIR)/include/generic.make
+-include $(MA_DIR)/include/common-rules.make
+
+kdist_clean: prep-deb-files
+	dh_clean
+	$(MAKE) clean KDIR=$(KSRC) KVERS=$(KVERS)
+
+kdist_config: prep-deb-files
+
+binary-modules: kdist_config
+	dh_testdir
+	dh_testroot
+	dh_prep
+	# Build and install the module
+	make -C $(KSRC) CONFIG_MALI400=m USING_UMP=0 BUILD=release USING_PROFILING=0 MALI_PLATFORM=sunxi USING_DVFS=0 M=$(CURDIR)
+	install -D -m 0644 mali.ko debian/$(PACKAGE)-$(KVERS)/lib/modules/$(KVERS)/extra/mali.ko
+	dh_installdocs
+	dh_installchangelogs
+	dh_installmodules
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_gencontrol -- -v$(VERSION)
+	dh_md5sums
+	dh_builddeb --destdir=$(DEB_DESTDIR)
+

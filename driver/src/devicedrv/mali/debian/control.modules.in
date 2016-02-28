@@ -1,0 +1,13 @@
+Source: chip-mali
+Section: utils
+Priority: optional
+Maintainer: Wynter Woods <wynter@nextthing.co>
+Build-Depends: debhelper (>= 5)
+Standards-Version: 3.9.6
+
+Package: chip-mali-modules-_KVERS_
+Architecture: any
+Provides: chip-mali-modules
+Description: Mali 400 MP GPU driver for C.H.I.P. for Linux (kernel _KVERS_)
+ This driver provides hardware accelerated 3d rendering capabilities
+ to the C.H.I.P. computer.

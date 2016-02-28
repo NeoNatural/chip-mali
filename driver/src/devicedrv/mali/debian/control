@@ -1,0 +1,13 @@
+Source: chip-mali
+Section: main/kernel
+Priority: optional
+Maintainer: Wynter Woods <wynter@nextthing.co>
+Build-Depends: debhelper (>= 5), bzip2
+Standards-Version: 3.9.6
+
+Package: chip-mali-source
+Architecture: all
+Depends: module-assistant, debhelper (>= 5), make, bzip2
+Description: Mali 400 MP GPU driver for C.H.I.P.
+ This driver provides hardware accelerated 3d rendering capabilities
+ to the C.H.I.P. computer.
