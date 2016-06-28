@@ -19,7 +19,18 @@ endif
 ARCH:=$(shell dpkg-architecture -qDEB_HOST_ARCH_CPU)
 
 export CC ARCH CROSS_COMPILE
+export MALI_PLATFORM=sunxi
 
+ifneq ($(MALI_PLATFORM),)
+	export EXTRA_DEFINES += -DMALI_FAKE_PLATFORM_DEVICE=1
+	export MALI_PLATFORM_FILES = $(wildcard platform/$(MALI_PLATFORM)/*.c)
+endif
+
+export CONFIG_MALI400=m
+export USING_UMP=0
+export BUILD=release
+export USING_PROFILING=0
+export USING_DVFS=0
 kdist_clean: prep-deb-files
 	dh_clean
 	$(MAKE) clean KDIR=$(KSRC) KVERS=$(KVERS)
@@ -31,7 +42,8 @@ binary-modules: kdist_config
 	dh_testroot
 	dh_prep
 	# Build and install the module
-	make -C $(KSRC) CONFIG_MALI400=m USING_UMP=0 BUILD=release USING_PROFILING=0 MALI_PLATFORM=sunxi USING_DVFS=0 M=$(CURDIR)
+	$(info KSRC is $(KSRC))
+	make -C $(KSRC) M=$(CURDIR)
 	install -D -m 0644 mali.ko debian/$(PACKAGE)-$(KVERS)/lib/modules/$(KVERS)/extra/mali.ko
 	dh_installdocs
 	dh_installchangelogs
