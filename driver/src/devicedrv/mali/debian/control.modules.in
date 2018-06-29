@@ -1,7 +1,7 @@
 Source: chip-mali
 Section: utils
 Priority: optional
-Maintainer: Wynter Woods <wynter@nextthing.co>
+Maintainer: Alex Kaplan <kaplan2539@gmail.com>
 Build-Depends: debhelper (>= 5)
 Standards-Version: 3.9.6
 
